@@ -157,7 +157,8 @@ class ChinaPostAirMail(tk.Tk):
         self.image = self.g.xpath('//img[@id="verifyimg"]').get('src')
         self.cookie = self.g.xpath('//input[@name="cookie"]').get('value')
         self.g.download(self.image, image_file)
-        self.code = str(AntiGate(self.db['api_key'], image_file))
+        self.gate = AntiGate(self.db['api_key'], image_file)
+        self.code = str(self.gate)
 
     def __getPage(self):
         self.g.setup(post={
@@ -181,6 +182,7 @@ class ChinaPostAirMail(tk.Tk):
         for i in range(3):
             info = self.__getPage()
             if 'verification code is wrong' in info:
+                self.gate.abuse()
                 del self.code
                 self.__getCaptcha()
                 continue
